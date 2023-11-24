@@ -25,6 +25,13 @@ import MapView from './components/MapView';
 import AutocompleteInput from './components/AutocompleteInput';
 import Buscador from './components/Buscador';
 import Mapa from './components/Mapa';
+// src/index.js o src/index.jsx
+// import { faAngleLeft } from '@fortawesome/free-solid-svg-icons';
+// import { library } from '@fortawesome/fontawesome-svg-core';
+// import { faCoffee, faAddressCard, /* ...otros iconos que necesites */ } from '@fortawesome/free-solid-svg-icons';
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+// library.add(faCoffee, faAddressCard, /* ...otros iconos que hayas importado */);
 
 function App() {
   // const [address, setAddress] = useState('');
@@ -53,9 +60,9 @@ function App() {
         handleSearch={handleSearch}
       /> */}
 
-        <Mapa listaLugares={address}></Mapa>
+        {/* <Mapa></Mapa> */}
 
-        <Buscador coordenadas={address} setAddress={setAddress}></Buscador>
+        <Buscador></Buscador>
 
     </div>
   );

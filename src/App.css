@@ -51,12 +51,15 @@
 #buscador .field .input{ 
   line-height: 24px;
   padding: 8px 15px;
-  border: var(--primary) 1px solid;
+  border: var(--white) 1px solid;
   border-radius: 5px;
   color:#fff;
   background-color: transparent;
   outline: none;
   margin-bottom: 15px;
+}
+#buscador .field .input:focus{
+  border-color: var(--primary);
 }
 
 /* Buscador Boton de busqueda */

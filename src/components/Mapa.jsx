@@ -1,5 +1,5 @@
-import React from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import React, { useMemo, useRef } from "react";
+import { MapContainer, TileLayer, Marker, Popup, Circle } from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
@@ -19,7 +19,46 @@ const Mapa = (props) => {
     // const listaLugares = [coordenadas?.lat, coordenadas?.lon]
 
     // La Plata
+
     const position = [-34.9214, -57.9545];
+    
+    const RenderIcons = ({ position, dates }) => {
+
+        const markerRef = useRef();
+    
+        const eventHandlers = useMemo(
+        () => ({
+            mouseover() {
+            if (markerRef) markerRef.current.openPopup();
+            },
+            mouseout() {
+            if (markerRef) markerRef.current.closePopup();
+            },
+            click() {
+                alert('Fue Cliqueado!');
+            },
+        }),
+        []
+        );
+    
+        return (
+        <Marker
+            ref={markerRef}
+            position={position}
+            icon={icon}
+            eventHandlers={eventHandlers}
+        >
+            <Popup>
+                <div>
+                    <p>N ° {dates?.address?.house_number}</p>
+                    <p>{dates?.address?.road}</p>
+                </div>
+            </Popup>
+
+        </Marker>
+        );
+    };
+
     return(
         <MapContainer 
             id='mapa'
@@ -33,10 +72,11 @@ const Mapa = (props) => {
             <TileLayer
             url="https://api.maptiler.com/maps/streets-v2-dark/256/{z}/{x}/{y}.png?key=TUMjEvDySBYccbHxxgJN"
             />
-                <Marker position={position} icon={icon}></Marker>
+                <RenderIcons position={position}/>
+
                 {coordenadas.map((item) => {
                     return(
-                        <Marker position={[item.lat, item?.lon]} icon={icon}></Marker>
+                        <RenderIcons position={[item.lat, item?.lon]} dates={item}/>
                     )
 
                 })}

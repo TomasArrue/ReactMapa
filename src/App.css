@@ -1,16 +1,27 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;500;600;700;900&display=swap');
+
 :root{
   --primary:#D98218;
   --secondary:#BF8A49;
+  --danger:#ED502D;
   --white: #fff;
   --black: #0D0D0D;
 }
 
+*{
+  margin: 0;
+  padding: 0;
+  font-family: 'Montserrat', sans-serif;
+
+}
+
 #body {
-    display: flex;
-    flex-direction: flex;
-    width: 100%;
-    height: 100%;
-  }
+  display: flex;
+  flex-direction: flex;
+  width: 100%;
+  height: 10%;
+}
   
 #mapa {
   width: 100vw;
@@ -18,7 +29,11 @@
   z-index: 10;
 }
 
+/* Buscador Campos */
 #buscador {
+  display: flex;
+  flex-direction: column;
+  padding: 30px 15px;
   position: fixed;
   z-index: 20;
   color: #fff;
@@ -26,18 +41,72 @@
   width: 20%;
   overflow-y: auto;
   height: 100vh;
+  box-shadow: 0px 0px 15px 0px #0000000D;
+
 }
-#buscador .input{ 
+#buscador .field{
+  display: flex;
+  flex-direction: column;
+}
+#buscador .field .input{ 
+  line-height: 24px;
+  padding: 8px 15px;
+  border: var(--primary) 1px solid;
+  border-radius: 5px;
   color:#fff;
-  border-color: #fff;
+  background-color: transparent;
+  outline: none;
+  margin-bottom: 15px;
 }
 
+/* Buscador Boton de busqueda */
 #buscador .btn-buscar{
   background: var(--primary);
-  width: 90%;
+  width: 100%;
   margin: auto;
+  font-weight: 600;
+}
+#buscador .btn-buscar:hover{
+  background-color: #EDAE2D;
 }
 
+/* Buscador lista de Locaciones */
+#buscador .list{
+  margin: 40px 0;
+}
+#buscador .list .location{
+  border-bottom: #aaa4 1px solid;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  width: 100%;
+}
+
+#buscador .list .location p{
+  text-align: left;
+  width: 100%;
+  padding: 0 15px;
+}
+
+#buscador .list .location .icon{
+  cursor: pointer;
+  transition: color 0.1s;
+}
+#buscador .list .location .icon:hover{
+  color: var(--primary);
+}
+
+#buscador .list .location:last-of-type{
+  border: none;
+}
+
+#buscador .list .location hr{
+  display: none;
+}
+
+
+/* Loader */
 .loader{
   display: inline-block;
   height: 14px; 

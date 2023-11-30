@@ -88,22 +88,39 @@ const Buscador = () => {
     return (
         <>
             <div id='buscador'>
-                <div>
-                    <OutlinedInput 
+
+                <div className="field">
+                    {/*  */}
+                    <label>
+                        Calle
+                    </label>
+
+                    {/*  */}
+                    <input
+                        type="text" 
                         className="input"
                         value={calle}
                         onChange={handleCalleChange}
                         placeholder="Calle"
                     />
                 </div>
-                <div>
-                    <OutlinedInput 
+
+                <div className="field">
+                    {/*  */}
+                    <label>
+                        Numero de casa
+                    </label>
+
+                    {/*  */}
+                    <input
+                        type="text" 
                         className="input"
                         value={numero}
                         onChange={handleNumeroChange}
                         placeholder="N°"
                     />
                 </div>
+
                 <div>
                     <Button 
                     className="btn-buscar"
@@ -113,22 +130,27 @@ const Buscador = () => {
                         {cargando ? <span className="loader"></span> : "Buscar"}
                     </Button>
                 </div>
-                <div>
-                    
-                    {listaLugares.length > 0 &&
-                    <List component="nav" aria-label="main mailbox folders">
-                        {listaLugares.map((item) => {
-                            return (
-                                <div key={item?.osm_id}>
-                                    <ListItem >
-                                        <ListItemIcon>
-                                            <img  src="./icono.png" 
-                                                alt="Icono" 
-                                                style={{width: 35, height: 35}}/>
-                                        </ListItemIcon>
-                                        <ListItemText primary={item?.display_name} />
+
+                {/* Lista de Locaciones */}
+                <div className="list">
+                    {
+                        listaLugares.length > 0 &&
+                        <ul component="nav" aria-label="main mailbox folders">
+                            {listaLugares.map((item) => {
+                                return (
+                                    <li key={item?.osm_id} className="location">
+                                        {/* Icono */}
+                                        <img  src="./icono.png" 
+                                            alt="Icono" 
+                                            style={{width: 35, height: 35}}/>
+
+                                        {/* Descripcion */}
+                                        <p onClick={()=>console.log(item)}>N ° {item?.address?.house_number} {item?.address?.road}</p>
+
+                                        {/* Boton de eliminacion */}
                                         <FontAwesomeIcon 
                                             icon={faTrash}
+                                            className="icon"
                                             onClick={()=>{
                                                 setListaLugares(listaLugares=>{
                                                     
@@ -139,12 +161,10 @@ const Buscador = () => {
                                                 })
                                             }} 
                                         />
-                                    </ListItem>
-                                    <Divider/>
-                                </div>
-                            )
-                        })}
-                    </List>
+                                    </li>
+                                )
+                            })}
+                        </ul>
                     }
                 </div>
             </div>

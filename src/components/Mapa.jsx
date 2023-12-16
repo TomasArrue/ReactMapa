@@ -3,8 +3,18 @@ import { MapContainer, TileLayer, Marker, Popup, Circle } from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
-const icon = L.icon({
-    iconUrl: "./icono.png",
+const pointWhite = L.icon({
+    iconUrl: "./map-point/point-white.png",
+    iconSize: [30, 30]
+})
+
+const pointPrimary = L.icon({
+    iconUrl: "./map-point/point-primary.png",
+    iconSize: [30, 30]
+})
+
+const pointDanger = L.icon({
+    iconUrl: "./map-point/point-danger.png",
     iconSize: [30, 30]
 })
 
@@ -24,18 +34,24 @@ const Mapa = (props) => {
     
     const RenderIcons = ({ position, dates }) => {
 
+        let icon = pointWhite;
+
+        if(dates?.repartidor == "Repartidor 1")icon = pointPrimary
+        if(dates?.repartidor == "Repartidor 2")icon = pointDanger
+
         const markerRef = useRef();
     
         const eventHandlers = useMemo(
         () => ({
             mouseover() {
-            if (markerRef) markerRef.current.openPopup();
             },
             mouseout() {
-            if (markerRef) markerRef.current.closePopup();
+                // cierra el Pop Up
+                // if (markerRef) markerRef.current.closePopup();
             },
             click() {
-                alert('Fue Cliqueado!');
+                if (markerRef) markerRef.current.openPopup();
+                // alert('Fue Cliqueado!');
             },
         }),
         []
@@ -52,6 +68,9 @@ const Mapa = (props) => {
                 <div>
                     <p>N ° {dates?.address?.house_number}</p>
                     <p>{dates?.address?.road}</p>
+                    <p>{dates?.repartidor}</p>
+                    <p>{dates?.descripcion}</p>
+                    <button className="bg-primary text-white px-[52px] py-[5px] rounded-[5px]">Completado</button>
                 </div>
             </Popup>
 
@@ -74,7 +93,7 @@ const Mapa = (props) => {
             />
                 <RenderIcons position={position}/>
 
-                {coordenadas.map((item) => {
+                {coordenadas.map((item, index) => {
                     return(
                         <RenderIcons position={[item.lat, item?.lon]} dates={item}/>
                     )

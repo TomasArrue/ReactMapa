@@ -14,6 +14,8 @@ const Buscador = () => {
     const [calle, setCalle] = useState("28");
     const [numero, setNumero] = useState("63");
     const [cargando, setCagado] = useState(false);
+    const [repartidor, setRepartidor] = useState("Repartidor 1");
+    const [descripcion, setDescripcion] = useState();
 
     const [listaLugares, setListaLugares] = useState([]);
 
@@ -26,6 +28,7 @@ const Buscador = () => {
         addressdetails: 'addressdetails'
     }
 
+    //#region Handlers
     const handleCalleChange = (event) => {
         setCalle(event.target.value);
     };
@@ -33,6 +36,15 @@ const Buscador = () => {
     const handleNumeroChange = (event) => {
         setNumero(event.target.value);
     };
+ 
+    const handleRepartidor = (event) => {
+        setRepartidor(event.target.value);
+    };
+    
+    const handleDescripcion = (event) => {
+        setDescripcion(event.target.value);
+    };
+    //#endregion
 
     const busqueda = () => {
         setCagado(true);
@@ -52,7 +64,10 @@ const Buscador = () => {
         fetch(`${NOMINATIM_BASE_URL}${queryString}`, requestOptions)
             .then((response) => response.json())
             .then((result) => {
-
+                result[0] = {...result[0],
+                    repartidor:repartidor,
+                    descripcion:descripcion
+                }
                 setListaLugares([...listaLugares,...result])
                 setCagado(false);
             })
@@ -62,10 +77,6 @@ const Buscador = () => {
             });
         
     };
-
-    const verDestino = (item) => {
-        console.log("ver destino");
-    }
 
     useEffect(()=>{
         console.log("listaLugares ",listaLugares)
@@ -87,15 +98,22 @@ const Buscador = () => {
 
     return (
         <>
+            {/* Buscador */}
             <div id='buscador'>
 
+                {/* Logo */}
+                <div className="mx-auto mb-8">
+                    <h2 className=" italic text-[21px] font-bold text-primary" style={{lineHeight:"12px"}}>BLENDS</h2>
+                    <h2 className=" italic text-[16px] font-bold">BURGER</h2>
+                </div>
+
+                {/* Calle */}
                 <div className="field">
-                    {/*  */}
+
                     <label>
                         Calle
                     </label>
 
-                    {/*  */}
                     <input
                         type="text" 
                         className="input"
@@ -105,13 +123,13 @@ const Buscador = () => {
                     />
                 </div>
 
+                {/* Numero de Casa */}
                 <div className="field">
-                    {/*  */}
+
                     <label>
                         Numero de casa
                     </label>
 
-                    {/*  */}
                     <input
                         type="text" 
                         className="input"
@@ -121,6 +139,42 @@ const Buscador = () => {
                     />
                 </div>
 
+                {/* Repartidor */}
+                <div className="field">
+
+                    <label>
+                        Repartidor
+                    </label>
+
+                    <select
+                    onChange={handleRepartidor}
+                    value={repartidor}
+                    className="border-[1px] border-solid border-white bg-transparent w-full rounded-[5px] mb-4 py-[8px] px-[15px]
+                    focus:outline-none focus:border-primary">
+                        <option className=" bg-[#333] py-[8px]">Repartidor 1</option>
+                        <option className=" bg-[#333] py-[8px]">Repartidor 2</option>
+                        {/* <option className=" bg-[#333] py-[8px]">Completado</option> */}
+                    </select>
+                </div>
+
+                {/* Descripción */}
+                <div className="field">
+
+                    <label>
+                        Descripción
+                    </label>
+
+                    <textarea
+                        type="text" 
+                        className="border-[1px] border-solid border-white bg-transparent w-full rounded-[5px] mb-4 py-[8px] px-[15px] min-h-[50px]
+                        focus:outline-none focus:border-primary"
+                        value={descripcion}
+                        onChange={handleDescripcion}
+                        placeholder="Casa con ..."
+                    />
+                </div>
+
+                {/* Boton */}
                 <div>
                     <Button 
                     className="btn-buscar"
@@ -130,45 +184,9 @@ const Buscador = () => {
                         {cargando ? <span className="loader"></span> : "Buscar"}
                     </Button>
                 </div>
-
-                {/* Lista de Locaciones */}
-                <div className="list">
-                    {
-                        listaLugares.length > 0 &&
-                        <ul component="nav" aria-label="main mailbox folders">
-                            {listaLugares.map((item) => {
-                                return (
-                                    <li key={item?.osm_id} className="location">
-                                        {/* Icono */}
-                                        <img  src="./icono.png" 
-                                            alt="Icono" 
-                                            style={{width: 35, height: 35}}/>
-
-                                        {/* Descripcion */}
-                                        <p onClick={()=>console.log(item)}>N ° {item?.address?.house_number} {item?.address?.road}</p>
-
-                                        {/* Boton de eliminacion */}
-                                        <FontAwesomeIcon 
-                                            icon={faTrash}
-                                            className="icon"
-                                            onClick={()=>{
-                                                setListaLugares(listaLugares=>{
-                                                    
-                                                    return listaLugares.filter((lugar) =>{
-                                                        if(lugar.osm_id != item?.osm_id) return lugar;
-                                                        else console.log(lugar)
-                                                    })
-                                                })
-                                            }} 
-                                        />
-                                    </li>
-                                )
-                            })}
-                        </ul>
-                    }
-                </div>
             </div>
 
+            {/* Mapa */}
             <Mapa coordenadas={listaLugares}/>
         </>
     )

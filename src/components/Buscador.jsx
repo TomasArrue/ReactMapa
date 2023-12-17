@@ -14,7 +14,7 @@ const Buscador = () => {
     const [calle, setCalle] = useState("28");
     const [numero, setNumero] = useState("63");
     const [cargando, setCagado] = useState(false);
-    const [repartidor, setRepartidor] = useState("Repartidor 1");
+    const [repartidor, setRepartidor] = useState("1");
     const [descripcion, setDescripcion] = useState();
 
     const [listaLugares, setListaLugares] = useState([]);
@@ -44,6 +44,16 @@ const Buscador = () => {
     const handleDescripcion = (event) => {
         setDescripcion(event.target.value);
     };
+
+    const handleLugar = (lugar ,index) =>{
+
+        let newListaLugares = [...listaLugares]
+        newListaLugares[index] = lugar
+        
+        console.log("newLugar ",newListaLugares)
+
+        setListaLugares(newListaLugares)
+    }
     //#endregion
 
     const busqueda = () => {
@@ -151,8 +161,8 @@ const Buscador = () => {
                     value={repartidor}
                     className="border-[1px] border-solid border-white bg-transparent w-full rounded-[5px] mb-4 py-[8px] px-[15px]
                     focus:outline-none focus:border-primary">
-                        <option className=" bg-[#333] py-[8px]">Repartidor 1</option>
-                        <option className=" bg-[#333] py-[8px]">Repartidor 2</option>
+                        <option value={1} className=" bg-[#333] py-[8px]">Repartidor 1</option>
+                        <option value={2} className=" bg-[#333] py-[8px]">Repartidor 2</option>
                         {/* <option className=" bg-[#333] py-[8px]">Completado</option> */}
                     </select>
                 </div>
@@ -170,7 +180,7 @@ const Buscador = () => {
                         focus:outline-none focus:border-primary"
                         value={descripcion}
                         onChange={handleDescripcion}
-                        placeholder="Casa con ..."
+                        placeholder="Casa con . . ."
                     />
                 </div>
 
@@ -187,7 +197,7 @@ const Buscador = () => {
             </div>
 
             {/* Mapa */}
-            <Mapa coordenadas={listaLugares}/>
+            <Mapa coordenadas={listaLugares} handleLugar={handleLugar}/>
         </>
     )
 }

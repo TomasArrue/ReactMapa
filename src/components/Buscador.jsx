@@ -79,7 +79,7 @@ const Buscador = () => {
 
                 result[0] = {...result[0],
                     repartidor:repartidor,
-                    descripcion:descripcion,
+                    descripcion:descripcion ? descripcion : "",
                     numeroDePedido: numeroDePedido + 1
                 }
                 
@@ -216,6 +216,10 @@ const Buscador = () => {
 
                     {/* Boton para Resetear */}
                     <button
+                    onClick={()=>{
+                        setListaLugares([]);
+                        setNumeroDePedido(0)
+                    }}
                     title="Resetear pedidos"
                     className=" rounded-[5px] bg-danger h-[35px] w-[35px] flex justify-center items-center transition-all mt-5
                     hover:h-[38px] hover:w-[38px]">

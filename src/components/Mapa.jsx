@@ -49,9 +49,12 @@ const Mapa = (props) => {
                 html: `
                 <div class="relative">
                     <img class="w-[30px] h-[30px]" src="./map-point/point-${iconColor}.png" />
-                    <span class="bg-${iconColor} text-white p-2 rounded-full flex w-5 h-5 justify-center items-center absolute top-[-15px] left-[-10px]">
-                        ${95}
+
+                    <span
+                    class="${iconColor == "white" ? "bg-white text-[#333]" : `bg-${iconColor} text-white`} p-[10px] rounded-[5px] flex h-5 justify-center items-center absolute top-[0] w-full font-semibold">
+                        ${lugar?.numeroDePedido ? lugar?.numeroDePedido : ":)"}
                     </span>
+
                 </div>`,
 
                 iconSize: [30, 30],
@@ -62,44 +65,75 @@ const Mapa = (props) => {
         >
             <Popup>
                 <div className="flex flex-col">
-                    {/* Numero de Casa */}
-                    <input
-                    type="text"
-                    className="py-1 px-2 my-2"
-                    value={lugar?.address?.house_number}
-                    onChange={(e)=>{setLugar(lugar =>{
-                            let newLugar = {...lugar}
-                            newLugar.address = {...lugar.address, house_number: e.target.value}
-                            return newLugar
-                        });
-                    }}/>
-
+                    
                     {/* Calle */}
-                    <input
-                    type="text"
-                    className="py-1 px-2 my-2"
-                    value={lugar?.address?.road}
-                    onChange={(e)=>{setLugar(lugar =>{
-                            let newLugar = {...lugar}
-                            newLugar.address = {...lugar.address, road: e.target.value}
-                            return newLugar
-                        });
-                    }}/>
+                    <div>
+                        <label className=" font-semibold">
+                            Calle
+                        </label>
+
+                        <input
+                        type="text"
+                        className="my-2 border-[1px] border-solid border-[#333] bg-transparent w-full rounded-[5px] mb-4 py-[8px] px-[15px] text-[#333]
+                        focus:outline-none focus:border-primary"
+                        value={lugar?.address?.road}
+                        onChange={(e)=>{setLugar(lugar =>{
+                                let newLugar = {...lugar}
+                                newLugar.address = {...lugar.address, road: e.target.value}
+                                return newLugar
+                            });
+                        }}/>
+                    </div>
+
+                    {/* Numero de Casa */}
+                    <div>
+                        <label className=" font-semibold">
+                            Numero de Casa
+                        </label>
+
+                        <input
+                        type="text"
+                        className="my-2 border-[1px] border-solid border-[#333] bg-transparent w-full rounded-[5px] mb-4 py-[8px] px-[15px] text-[#333]
+                        focus:outline-none focus:border-primary"
+                        value={lugar?.address?.house_number}
+                        onChange={(e)=>{setLugar(lugar =>{
+                                let newLugar = {...lugar}
+                                newLugar.address = {...lugar.address, house_number: e.target.value}
+                                return newLugar
+                            });
+                        }}/>
+                    </div>
 
                     {/* Repartidor */}
-                    <select
-                    className="py-1 px-2 my-2"
-                    value={lugar?.repartidor}
-                    onChange={(e)=>{setLugar(lugar =>{ return{...lugar, repartidor: e.target.value} });}}>
-                        <option value={1}>Repartidor 1</option>
-                        <option value={2}>Repartidor 2</option>
-                    </select>
+                    <div>
+                        <label className=" font-semibold">
+                            Repartidor
+                        </label>
 
-                    <textarea
-                    className="py-1 px-2 my-2"
-                    value={lugar?.descripcion}
-                    onChange={(e)=>{setLugar(lugar =>{ return{...lugar, descripcion: e.target.value} });}}
-                    />
+                        <select
+                        className="my-2 border-[1px] border-solid border-[#333] bg-transparent w-full rounded-[5px] mb-4 py-[8px] px-[15px] text-[#333]
+                        focus:outline-none focus:border-primary"
+                        value={lugar?.repartidor}
+                        onChange={(e)=>{setLugar(lugar =>{ return{...lugar, repartidor: e.target.value} });}}>
+                            <option value={0}>Ninguno</option>
+                            <option value={1}>Repartidor 1</option>
+                            <option value={2}>Repartidor 2</option>
+                        </select>
+                    </div>
+
+                    {/* Descripcion */}
+                    <div>
+                        <label className=" font-semibold">
+                            Descripción
+                        </label>
+
+                        <textarea
+                        className="my-2 border-[1px] border-solid border-[#333] bg-transparent w-full rounded-[5px] mb-4 py-[8px] px-[15px] text-[#333]
+                        focus:outline-none focus:border-primary"
+                        value={lugar?.descripcion}
+                        onChange={(e)=>{setLugar(lugar =>{ return{...lugar, descripcion: e.target.value} });}}
+                        />
+                    </div>
 
                     {/* Botones */}
                     <div className={`transition-all overflow-hidden flex flex-col justify-evenly ${lugar != dates ? "h-[80px]" : "h-0"}`}>

@@ -5,7 +5,7 @@ import DraftsIcon from '@mui/icons-material/Drafts';
 import Mapa from "./Mapa";
 import { Image } from "@mui/icons-material";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faRotateForward, faRotateRight, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 
 const Buscador = () => {
@@ -14,8 +14,10 @@ const Buscador = () => {
     const [calle, setCalle] = useState("28");
     const [numero, setNumero] = useState("63");
     const [cargando, setCagado] = useState(false);
-    const [repartidor, setRepartidor] = useState("1");
+    const [repartidor, setRepartidor] = useState("0");
     const [descripcion, setDescripcion] = useState();
+    
+    const [numeroDePedido, setNumeroDePedido] = useState(0);
 
     const [listaLugares, setListaLugares] = useState([]);
 
@@ -74,10 +76,15 @@ const Buscador = () => {
         fetch(`${NOMINATIM_BASE_URL}${queryString}`, requestOptions)
             .then((response) => response.json())
             .then((result) => {
+
                 result[0] = {...result[0],
                     repartidor:repartidor,
-                    descripcion:descripcion
+                    descripcion:descripcion,
+                    numeroDePedido: numeroDePedido + 1
                 }
+                
+                setNumeroDePedido(numeroDePedido + 1)
+
                 setListaLugares([...listaLugares,...result])
                 setCagado(false);
             })
@@ -110,89 +117,110 @@ const Buscador = () => {
         <>
             {/* Buscador */}
             <div id='buscador'>
-
                 {/* Logo */}
                 <div className="mx-auto mb-8">
                     <h2 className=" italic text-[21px] font-bold text-primary" style={{lineHeight:"12px"}}>BLENDS</h2>
                     <h2 className=" italic text-[16px] font-bold">BURGER</h2>
                 </div>
 
-                {/* Calle */}
-                <div className="field">
+                {/* Capos */}
+                <div className="px-[15px]">
+                    {/* Calle */}
+                    <div className="field">
 
-                    <label>
-                        Calle
-                    </label>
+                        <label>
+                            Calle
+                        </label>
 
-                    <input
-                        type="text" 
-                        className="input"
-                        value={calle}
-                        onChange={handleCalleChange}
-                        placeholder="Calle"
-                    />
+                        <input
+                            type="text" 
+                            className="input"
+                            value={calle}
+                            onChange={handleCalleChange}
+                            placeholder="Calle"
+                        />
+                    </div>
+
+                    {/* Numero de Casa */}
+                    <div className="field">
+
+                        <label>
+                            Numero de casa
+                        </label>
+
+                        <input
+                            type="text" 
+                            className="input"
+                            value={numero}
+                            onChange={handleNumeroChange}
+                            placeholder="N°"
+                        />
+                    </div>
+
+                    {/* Repartidor */}
+                    <div className="field">
+
+                        <label>
+                            Repartidor
+                        </label>
+
+                        <select
+                        onChange={handleRepartidor}
+                        value={repartidor}
+                        className="border-[1px] border-solid border-white bg-transparent w-full rounded-[5px] mb-4 py-[8px] px-[15px]
+                        focus:outline-none focus:border-primary">
+                            <option value={0} className=" bg-[#333] py-[8px]">Ninguno</option>
+                            <option value={1} className=" bg-[#333] py-[8px]">Repartidor 1</option>
+                            <option value={2} className=" bg-[#333] py-[8px]">Repartidor 2</option>
+                            {/* <option className=" bg-[#333] py-[8px]">Completado</option> */}
+                        </select>
+                    </div>
+
+                    {/* Descripción */}
+                    <div className="field">
+
+                        <label>
+                            Descripción
+                        </label>
+
+                        <textarea
+                            type="text" 
+                            className="border-[1px] border-solid border-white bg-transparent w-full rounded-[5px] mb-4 py-[8px] px-[15px] min-h-[50px]
+                            focus:outline-none focus:border-primary"
+                            value={descripcion} 
+                            onChange={handleDescripcion}
+                            placeholder="Casa con . . ."
+                        />
+                    </div>
+
+                    {/* Boton */}
+                    <div>
+                        <Button 
+                        className="btn-buscar"
+                            variant="contained"
+                            onClick= {busqueda}
+                        >
+                            {cargando ? <span className="loader"></span> : "Buscar"}
+                        </Button>
+                    </div>
                 </div>
 
-                {/* Numero de Casa */}
-                <div className="field">
+                {/* Numero de pedido */}
+                <div className=" flex-grow-[1] items-center flex justify-center w-full flex-col py-5">
 
-                    <label>
-                        Numero de casa
-                    </label>
+                    {/* Titulo */}
+                    <p className="w-full text-center py-1 border-y-2 border-primary text-primary">Ultimo numero de pedido</p>
 
-                    <input
-                        type="text" 
-                        className="input"
-                        value={numero}
-                        onChange={handleNumeroChange}
-                        placeholder="N°"
-                    />
-                </div>
+                    {/* Numero */}
+                    <h1 className="text-[41px] bg-primary w-[70px] h-[70px] rounded-full flex justify-center items-center my-3">{numeroDePedido}</h1>
 
-                {/* Repartidor */}
-                <div className="field">
-
-                    <label>
-                        Repartidor
-                    </label>
-
-                    <select
-                    onChange={handleRepartidor}
-                    value={repartidor}
-                    className="border-[1px] border-solid border-white bg-transparent w-full rounded-[5px] mb-4 py-[8px] px-[15px]
-                    focus:outline-none focus:border-primary">
-                        <option value={1} className=" bg-[#333] py-[8px]">Repartidor 1</option>
-                        <option value={2} className=" bg-[#333] py-[8px]">Repartidor 2</option>
-                        {/* <option className=" bg-[#333] py-[8px]">Completado</option> */}
-                    </select>
-                </div>
-
-                {/* Descripción */}
-                <div className="field">
-
-                    <label>
-                        Descripción
-                    </label>
-
-                    <textarea
-                        type="text" 
-                        className="border-[1px] border-solid border-white bg-transparent w-full rounded-[5px] mb-4 py-[8px] px-[15px] min-h-[50px]
-                        focus:outline-none focus:border-primary"
-                        value={descripcion}
-                        onChange={handleDescripcion}
-                        placeholder="Casa con . . ."
-                    />
-                </div>
-
-                {/* Boton */}
-                <div>
-                    <Button 
-                    className="btn-buscar"
-                        variant="contained"
-                        onClick= {busqueda}
-                    >
-                        {cargando ? <span className="loader"></span> : "Buscar"}
-                    </Button>
+                    {/* Boton para Resetear */}
+                    <button
+                    title="Resetear pedidos"
+                    className=" rounded-[5px] bg-danger h-[35px] w-[35px] flex justify-center items-center transition-all mt-5
+                    hover:h-[38px] hover:w-[38px]">
+                        <FontAwesomeIcon className="" icon={faRotateRight}/>
+                    </button>
                 </div>
             </div>
 

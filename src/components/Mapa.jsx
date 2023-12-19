@@ -4,7 +4,7 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
 const Mapa = (props) => {
-    const { coordenadas, handleLugar } = props
+    const { coordenadas, handleLugar, handleCordenadas } = props
     const position = [-34.9214, -57.9545];
     
 
@@ -35,11 +35,25 @@ const Mapa = (props) => {
         []
         );
         
-        function actualizarLugar(){
+        function actualizarLugar(){           
 
             
             handleLugar(lugar, index)
+
+            if(
+                lugar?.address?.house_number != dates?.address?.house_number ||
+                lugar?.calle != dates?.calle
+            )
+
+            handleCordenadas(index, lugar?.calle, lugar?.address?.house_number)
         }
+
+        useEffect(()=>{
+            
+        },[])
+
+        // En caso de que el pedido este completado no se renderiza
+        if(dates?.repartidor == "-1") return (null)
 
         return (
         <Marker
@@ -76,10 +90,10 @@ const Mapa = (props) => {
                         type="text"
                         className="my-2 border-[1px] border-solid border-[#333] bg-transparent w-full rounded-[5px] mb-4 py-[8px] px-[15px] text-[#333]
                         focus:outline-none focus:border-primary"
-                        value={lugar?.address?.road}
+                        value={lugar?.calle}
                         onChange={(e)=>{setLugar(lugar =>{
                                 let newLugar = {...lugar}
-                                newLugar.address = {...lugar.address, road: e.target.value}
+                                newLugar = {...lugar, calle: e.target.value}
                                 return newLugar
                             });
                         }}/>
@@ -115,6 +129,7 @@ const Mapa = (props) => {
                         focus:outline-none focus:border-primary"
                         value={lugar?.repartidor}
                         onChange={(e)=>{setLugar(lugar =>{ return{...lugar, repartidor: e.target.value} });}}>
+                            <option value={-1}>Completado</option>
                             <option value={0}>Ninguno</option>
                             <option value={1}>Repartidor 1</option>
                             <option value={2}>Repartidor 2</option>

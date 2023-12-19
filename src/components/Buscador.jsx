@@ -17,14 +17,13 @@ const Buscador = () => {
     const [repartidor, setRepartidor] = useState("0");
     const [descripcion, setDescripcion] = useState();
     
-    const [numeroDePedido, setNumeroDePedido] = useState(0);
+    const [numeroDePedido, setNumeroDePedido] = useState( JSON.parse(sessionStorage.getItem('numeroDePedido')) || 0 );
 
-    const [listaLugares, setListaLugares] = useState([]);
+    const [listaLugares, setListaLugares] = useState( JSON.parse(sessionStorage.getItem('listaLugares')) || []);
 
     const direccion = numero + ", " + calle + ", La Plata, Partido de La Plata, Buenos Aires, 1900, Argentina";
 
-    const parametros = {
-        
+    const parametros = {       
         q: '',
         format: 'json',
         addressdetails: 'addressdetails'
@@ -78,6 +77,7 @@ const Buscador = () => {
             .then((result) => {
 
                 result[0] = {...result[0],
+                    calle:calle,
                     repartidor:repartidor,
                     descripcion:descripcion ? descripcion : "",
                     numeroDePedido: numeroDePedido + 1
@@ -95,9 +95,52 @@ const Buscador = () => {
         
     };
 
+    const handleCordenadas = (index, newCalle, newNumero) => {
+        let query = newNumero + ", " + newCalle + ", La Plata, Partido de La Plata, Buenos Aires, 1900, Argentina"
+        console.log("AJSJDJ ", query)
+        const parametros = {
+            q: query,
+            format: 'json',
+            addressdetails: 1,
+            polygon_geojson: 0,
+            limit: 1
+        };
+        const queryString = new URLSearchParams(parametros).toString();
+        const requestOptions = {
+            method: 'GET',
+            redirect: 'follow'
+        };
+        fetch(`${NOMINATIM_BASE_URL}${queryString}`, requestOptions)
+            .then((response) => response.json())
+            .then((result) => {
+                result[0] = {...result[0]}
+                console.log("Query ", result[0])
+                let newListaDeLugares = [...listaLugares]
+                newListaDeLugares[index] = {...result[0],
+                    calle:newListaDeLugares[index]?.calle,
+                    repartidor: newListaDeLugares[index]?.repartidor,
+                    descripcion: newListaDeLugares[index]?.descripcion,
+                    numeroDePedido: newListaDeLugares[index]?.numeroDePedido
+                } 
+
+                setListaLugares(newListaDeLugares)
+            })
+            .catch((err) => {
+                console.log("err: ", err);
+            });
+        
+    };
+
     useEffect(()=>{
         console.log("listaLugares ",listaLugares)
+
+        // Se guarda la "listaLugares" en el Almacenamiento de session
+        sessionStorage.setItem('listaLugares', JSON.stringify(listaLugares));
     },[listaLugares])
+
+    useEffect(()=>{
+        sessionStorage.setItem('numeroDePedido', JSON.stringify(numeroDePedido));
+    },[numeroDePedido])
 
     const eliminar = (id) =>{
         let newListaLugares = listaLugares;
@@ -206,30 +249,39 @@ const Buscador = () => {
                 </div>
 
                 {/* Numero de pedido */}
-                <div className=" flex-grow-[1] items-center flex justify-center w-full flex-col py-5">
+                <div className=" flex-grow-[1] items-center flex justify-center w-full flex-col my-5 ">
 
-                    {/* Titulo */}
-                    <p className="w-full text-center py-1 border-y-2 border-primary text-primary">Ultimo numero de pedido</p>
+                    <div className=" border-y-2 border-primary w-full flex flex-col items-center justify-center py-5">
 
-                    {/* Numero */}
-                    <h1 className="text-[41px] bg-primary w-[70px] h-[70px] rounded-full flex justify-center items-center my-3">{numeroDePedido}</h1>
+                        {/* Titulo */}
+                        <p className="w-full text-center py-1  text-primary">Ultimo numero de pedido</p>
 
-                    {/* Boton para Resetear */}
+                        {/* Numero */}
+                        <h1 className="text-[41px] bg-primary w-[70px] h-[70px] rounded-full flex justify-center items-center my-3">{numeroDePedido}</h1>
+
+                    </div>
+
+                </div>
+                
+                {/* Boton para Resetear */}
+                <div className="w-full px-[25px]">
                     <button
                     onClick={()=>{
                         setListaLugares([]);
                         setNumeroDePedido(0)
                     }}
                     title="Resetear pedidos"
-                    className=" rounded-[5px] bg-danger h-[35px] w-[35px] flex justify-center items-center transition-all mt-5
-                    hover:h-[38px] hover:w-[38px]">
-                        <FontAwesomeIcon className="" icon={faRotateRight}/>
+                    className="rounded-[5px] bg-danger h-[35px] flex justify-center items-center transition-all mt-5 w-full py-3
+                    hover:bg-[#ed6244]">
+                        Resetear pedidos
+                        <FontAwesomeIcon className="ml-2" icon={faRotateRight}/>
                     </button>
+
                 </div>
             </div>
 
             {/* Mapa */}
-            <Mapa coordenadas={listaLugares} handleLugar={handleLugar}/>
+            <Mapa coordenadas={listaLugares} handleLugar={handleLugar} handleCordenadas={handleCordenadas}/>
         </>
     )
 }

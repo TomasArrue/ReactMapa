@@ -5,11 +5,15 @@ import DraftsIcon from '@mui/icons-material/Drafts';
 import Mapa from "./Mapa";
 import { Image } from "@mui/icons-material";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faRotateForward, faRotateRight, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faRotateForward, faRotateRight, faTrash, faTruck } from '@fortawesome/free-solid-svg-icons';
 
 
 const Buscador = () => {
     const NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org/search?"
+
+    const [repartidores, setRepartidores] = useState([
+
+    ])
 
     const [calle, setCalle] = useState("28");
     const [numero, setNumero] = useState("63");
@@ -77,6 +81,7 @@ const Buscador = () => {
             .then((result) => {
 
                 result[0] = {...result[0],
+                    completado: false,
                     calle:calle,
                     repartidor:repartidor,
                     descripcion:descripcion ? descripcion : "",
@@ -97,7 +102,7 @@ const Buscador = () => {
 
     const handleCordenadas = (index, newCalle, newNumero) => {
         let query = newNumero + ", " + newCalle + ", La Plata, Partido de La Plata, Buenos Aires, 1900, Argentina"
-        console.log("AJSJDJ ", query)
+
         const parametros = {
             q: query,
             format: 'json',
@@ -130,7 +135,7 @@ const Buscador = () => {
             });
         
     };
-
+    
     useEffect(()=>{
         console.log("listaLugares ",listaLugares)
 
@@ -251,13 +256,29 @@ const Buscador = () => {
                 {/* Numero de pedido */}
                 <div className=" flex-grow-[1] items-center flex justify-center w-full flex-col my-5 ">
 
-                    <div className=" border-y-2 border-primary w-full flex flex-col items-center justify-center py-5">
+                    <div className=" border-t-2 border-[#fff4] w-full flex flex-col items-center justify-center py-5">
 
                         {/* Titulo */}
-                        <p className="w-full text-center py-1  text-primary">Ultimo numero de pedido</p>
+                        <div className="w-full px-[15px] py-1 text-[18px] flex justify-between items-center mb-4">
+                            Cantidad de pedidos asignados <FontAwesomeIcon icon={faTruck}/>
+                        </div>
+
+                        {/* Repartodores */}
+                        <div className="px-[15px] w-full">
+                            <div className="py-3 w-full flex justify-between px-2 transition-all
+                            hover:bg-[#fff1]">
+                                <span className=" text-primary">Repartidor 1</span>
+                                <p>{listaLugares?.filter(lugar=>lugar?.repartidor == "1")?.length}</p>
+                            </div>
+                            <div className="border-t-2 border-[#fff4] py-3 w-full flex justify-between px-2 transition-all
+                            hover:bg-[#fff1]">
+                                <span className=" text-danger">Repartidor 2</span> 
+                                <p>{listaLugares?.filter(lugar=>lugar?.repartidor == "2")?.length}</p>
+                            </div>
+                        </div>
 
                         {/* Numero */}
-                        <h1 className="text-[41px] bg-primary w-[70px] h-[70px] rounded-full flex justify-center items-center my-3">{numeroDePedido}</h1>
+                        {/* <h1 className="text-[41px] bg-primary w-[70px] h-[70px] rounded-full flex justify-center items-center my-3">{numeroDePedido}</h1> */}
 
                     </div>
 

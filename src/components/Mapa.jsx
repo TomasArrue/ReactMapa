@@ -37,7 +37,7 @@ const Mapa = (props) => {
         
         function actualizarLugar(){           
 
-            
+            console.log("Actualizado")
             handleLugar(lugar, index)
 
             if(
@@ -48,12 +48,18 @@ const Mapa = (props) => {
             handleCordenadas(index, lugar?.calle, lugar?.address?.house_number)
         }
 
+        function pedidoCompletado(){
+            let newLugar = {...lugar}
+            newLugar.completado = true
+            setLugar(newLugar);
+        }
+
         useEffect(()=>{
-            
-        },[])
+            if(dates != lugar && lugar?.completado)actualizarLugar();
+        },[lugar])
 
         // En caso de que el pedido este completado no se renderiza
-        if(dates?.repartidor == "-1") return (null)
+        if(dates?.completado == true) return (null)
 
         return (
         <Marker
@@ -143,7 +149,7 @@ const Mapa = (props) => {
                         </label>
 
                         <textarea
-                        className="my-2 border-[1px] border-solid border-[#333] bg-transparent w-full rounded-[5px] mb-4 py-[8px] px-[15px] text-[#333]
+                        className="mt-2 border-[1px] border-solid border-[#333] bg-transparent w-full rounded-[5px] py-[8px] px-[15px] text-[#333]
                         focus:outline-none focus:border-primary"
                         value={lugar?.descripcion}
                         onChange={(e)=>{setLugar(lugar =>{ return{...lugar, descripcion: e.target.value} });}}
@@ -155,6 +161,10 @@ const Mapa = (props) => {
                         <button onClick={actualizarLugar} className="bg-primary text-white px-[52px] py-[5px] rounded-[5px] w-full">Guardar cambios</button>
                         <button onClick={()=>setLugar(dates)} className="bg-danger text-white px-[52px] py-[5px] rounded-[5px] w-full">Descartar cambios</button>
                     </div>
+
+                    <button className="p-2 w-full bg-success_dark text-[15px] mt-3 text-white rounded-[5px]" onClick={pedidoCompletado}>
+                        Completado
+                    </button>
                 </div>
             </Popup>
 

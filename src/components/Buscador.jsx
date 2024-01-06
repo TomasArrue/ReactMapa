@@ -5,7 +5,7 @@ import DraftsIcon from '@mui/icons-material/Drafts';
 import Mapa from "./Mapa";
 import { Image } from "@mui/icons-material";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faRotateForward, faRotateRight, faTrash, faTruck } from '@fortawesome/free-solid-svg-icons';
+import { faCaretLeft, faCaretRight, faRotateForward, faRotateRight, faTrash, faTruck, faTruckFast } from '@fortawesome/free-solid-svg-icons';
 
 
 const Buscador = () => {
@@ -15,15 +15,17 @@ const Buscador = () => {
 
     ])
 
-    const [calle, setCalle] = useState("28");
-    const [numero, setNumero] = useState("63");
+    const [calle, setCalle] = useState("");
+    const [numero, setNumero] = useState("");
     const [cargando, setCagado] = useState(false);
     const [repartidor, setRepartidor] = useState("0");
     const [descripcion, setDescripcion] = useState();
-    
+     
     const [numeroDePedido, setNumeroDePedido] = useState( JSON.parse(sessionStorage.getItem('numeroDePedido')) || 0 );
 
     const [listaLugares, setListaLugares] = useState( JSON.parse(sessionStorage.getItem('listaLugares')) || []);
+
+    const [menuOpen, setMenuOpen] = useState(true);
 
     const direccion = numero + ", " + calle + ", La Plata, Partido de La Plata, Buenos Aires, 1900, Argentina";
 
@@ -163,141 +165,156 @@ const Buscador = () => {
 
     return (
         <>
-            {/* Buscador */}
-            <div id='buscador'>
-                {/* Logo */}
-                <div className="mx-auto mb-8">
-                    <h2 className=" italic text-[21px] font-bold text-primary" style={{lineHeight:"12px"}}>BLENDS</h2>
-                    <h2 className=" italic text-[16px] font-bold">BURGER</h2>
+            <div className={`fixed z-20 transition-all ${!menuOpen ? "left-[-406px]" : "left-0"} `}>
+
+                {/* Botton para cerrar/abrir menu */}
+                <div onClick={()=>setMenuOpen(!menuOpen)} className="absolute left-full bg-[#333] text-white bottom-1/2 translate-y-[50%] px-3 py-4 rounded-[0_7px_7px_0] cursor-pointer shadow-[2px_2px_5px_#0006]">
+                    <FontAwesomeIcon icon={!menuOpen ? faCaretRight : faCaretLeft}/>
                 </div>
 
-                {/* Capos */}
-                <div className="px-[15px]">
-                    {/* Calle */}
-                    <div className="field">
+                {/* Buscador */}
+                <div id='buscador'>
 
-                        <label>
-                            Calle
-                        </label>
+                    {/* Capos */}
+                    <div className="px-[15px] z-30">
+                        {/* Calle */}
+                        <div className="field">
 
-                        <input
-                            type="text" 
-                            className="input"
-                            value={calle}
-                            onChange={handleCalleChange}
-                            placeholder="Calle"
-                        />
-                    </div>
 
-                    {/* Numero de Casa */}
-                    <div className="field">
+                            <label>
+                                Calle
+                            </label>
 
-                        <label>
-                            Numero de casa
-                        </label>
-
-                        <input
-                            type="text" 
-                            className="input"
-                            value={numero}
-                            onChange={handleNumeroChange}
-                            placeholder="N°"
-                        />
-                    </div>
-
-                    {/* Repartidor */}
-                    <div className="field">
-
-                        <label>
-                            Repartidor
-                        </label>
-
-                        <select
-                        onChange={handleRepartidor}
-                        value={repartidor}
-                        className="border-[1px] border-solid border-white bg-transparent w-full rounded-[5px] mb-4 py-[8px] px-[15px]
-                        focus:outline-none focus:border-primary">
-                            <option value={0} className=" bg-[#333] py-[8px]">Ninguno</option>
-                            <option value={1} className=" bg-[#333] py-[8px]">Repartidor 1</option>
-                            <option value={2} className=" bg-[#333] py-[8px]">Repartidor 2</option>
-                            {/* <option className=" bg-[#333] py-[8px]">Completado</option> */}
-                        </select>
-                    </div>
-
-                    {/* Descripción */}
-                    <div className="field">
-
-                        <label>
-                            Descripción
-                        </label>
-
-                        <textarea
-                            type="text" 
-                            className="border-[1px] border-solid border-white bg-transparent w-full rounded-[5px] mb-4 py-[8px] px-[15px] min-h-[50px]
-                            focus:outline-none focus:border-primary"
-                            value={descripcion} 
-                            onChange={handleDescripcion}
-                            placeholder="Casa con . . ."
-                        />
-                    </div>
-
-                    {/* Boton */}
-                    <div>
-                        <Button 
-                        className="btn-buscar"
-                            variant="contained"
-                            onClick= {busqueda}
-                        >
-                            {cargando ? <span className="loader"></span> : "Buscar"}
-                        </Button>
-                    </div>
-                </div>
-
-                {/* Numero de pedido */}
-                <div className=" flex-grow-[1] items-center flex justify-center w-full flex-col my-5 ">
-
-                    <div className=" border-t-2 border-[#fff4] w-full flex flex-col items-center justify-center py-5">
-
-                        {/* Titulo */}
-                        <div className="w-full px-[15px] py-1 text-[18px] flex justify-between items-center mb-4">
-                            Cantidad de pedidos asignados <FontAwesomeIcon icon={faTruck}/>
+                            <input
+                                type="text" 
+                                className="input"
+                                value={calle}
+                                onChange={handleCalleChange}
+                                placeholder="Calle"
+                            />
                         </div>
 
-                        {/* Repartodores */}
-                        <div className="px-[15px] w-full">
-                            <div className="py-3 w-full flex justify-between px-2 transition-all
-                            hover:bg-[#fff1]">
-                                <span className=" text-primary">Repartidor 1</span>
-                                <p>{listaLugares?.filter(lugar=>lugar?.repartidor == "1")?.length}</p>
-                            </div>
-                            <div className="border-t-2 border-[#fff4] py-3 w-full flex justify-between px-2 transition-all
-                            hover:bg-[#fff1]">
-                                <span className=" text-danger">Repartidor 2</span> 
-                                <p>{listaLugares?.filter(lugar=>lugar?.repartidor == "2")?.length}</p>
-                            </div>
+                        {/* Numero de Casa */}
+                        <div className="field">
+
+
+                            <label>
+                                Numero de casa
+                            </label>
+
+                            <input
+                                type="text" 
+                                className="input"
+                                value={numero}
+                                onChange={handleNumeroChange}
+                                placeholder="N°"
+                            />
                         </div>
 
-                        {/* Numero */}
-                        {/* <h1 className="text-[41px] bg-primary w-[70px] h-[70px] rounded-full flex justify-center items-center my-3">{numeroDePedido}</h1> */}
+                        {/* Repartidor */}
+                        <div className="field">
 
+
+                            <label>
+                                Repartidor
+                            </label>
+
+                            <select
+                            onChange={handleRepartidor}
+                            value={repartidor}
+                            className="border-[1px] border-solid border-white bg-transparent w-full rounded-[5px] mb-4 py-[8px] px-[15px]
+                            focus:outline-none focus:border-primary">
+                                <option value={0} className=" bg-[#333] py-[8px]">Ninguno</option>
+                                <option value={1} className=" bg-[#333] py-[8px]">Repartidor 1</option>
+                                <option value={2} className=" bg-[#333] py-[8px]">Repartidor 2</option>
+                                {/* <option className=" bg-[#333] py-[8px]">Completado</option> */}
+                            </select>
+                        </div>
+
+                        {/* Descripción */}
+                        <div className="field">
+
+
+                            <label>
+                                Descripción
+                            </label>
+
+                            <textarea
+                                type="text" 
+                                className="border-[1px] border-solid border-white bg-transparent w-full rounded-[5px] mb-4 py-[8px] px-[15px] min-h-[50px]
+                                focus:outline-none focus:border-primary"
+                                value={descripcion} 
+                                onChange={handleDescripcion}
+                                placeholder="Casa con . . ."
+                            />
+                        </div>
+
+                        {/* Boton */}
+                        <div>
+                            <Button 
+                            className="btn-buscar"
+                                variant="contained"
+                                onClick= {busqueda}
+                            >
+                                {cargando ? <span className="loader"></span> : "Buscar"}
+                            </Button>
+                        </div>
                     </div>
 
-                </div>
-                
-                {/* Boton para Resetear */}
-                <div className="w-full px-[25px]">
-                    <button
-                    onClick={()=>{
-                        setListaLugares([]);
-                        setNumeroDePedido(0)
-                    }}
-                    title="Resetear pedidos"
-                    className="rounded-[5px] bg-danger h-[35px] flex justify-center items-center transition-all mt-5 w-full py-3
-                    hover:bg-[#ed6244]">
-                        Resetear pedidos
-                        <FontAwesomeIcon className="ml-2" icon={faRotateRight}/>
-                    </button>
+                    {/* Numero de pedido */}
+                    <div className=" flex-grow-[1] items-center flex justify-center w-full flex-col my-5  z-30">
 
+                        <div className=" border-t-2 border-[#fff4] w-full flex flex-col items-center justify-center py-5">
+
+                            {/* Titulo */}
+                            {/* <div className="w-full px-[15px] py-1 text-[18px] flex justify-between items-center mb-4">
+                                Cantidad de pedidos asignados <FontAwesomeIcon icon={faTruck}/>
+                            </div> */}
+
+                            {/* Repartodores */}
+                            <div className="px-[15px] w-full">
+                                <div className="py-3 w-full flex justify-between px-2 transition-all
+                                hover:bg-[#fff1]">
+                                    <span className=" text-primary">Repartidor 1</span>
+                                    <p>{listaLugares?.filter(lugar=>lugar?.repartidor == "1")?.length}<FontAwesomeIcon className="ml-3 opacity-70" icon={faTruckFast}/></p>
+                                </div>
+                                <div className="border-t-2 border-[#fff4] py-3 w-full flex justify-between px-2 transition-all
+                                hover:bg-[#fff1]">
+                                    <span className=" text-secondary">Repartidor 2</span> 
+                                    <p>{listaLugares?.filter(lugar=>lugar?.repartidor == "2")?.length}<FontAwesomeIcon className="ml-3 opacity-70" icon={faTruckFast}/></p>
+                                </div>
+                            </div>
+
+                            {/* Numero */}
+                            {/* <h1 className="text-[41px] bg-primary w-[70px] h-[70px] rounded-full flex justify-center items-center my-3">{numeroDePedido}</h1> */}
+
+                        </div>
+
+                    </div>
+                    
+                    {/* Boton para Resetear */}
+                    <div className="w-full px-[25px] z-30">
+                        <button
+                        onClick={()=>{
+                            setListaLugares([]);
+                            setNumeroDePedido(0)
+                        }}
+                        title="Resetear pedidos"
+                        className="rounded-[5px] bg-danger h-[35px] flex justify-center items-center transition-all mt-5 w-full py-3
+                        hover:bg-[#ed6244]">
+                            Resetear pedidos
+                            <FontAwesomeIcon className="ml-2" icon={faRotateRight}/>
+                        </button>
+
+                    </div>
+                    
+                    {/* Logo */}
+                    <div className="mx-auto mb-8 absolute opacity-10 w-full h-full flex justify-center items-center">
+                        <div>
+                            <h2 className="text-border italic text-[51px] font-bold text-[#111]" style={{lineHeight:"12px"}}>BLENDS</h2>
+                            <h2 className="text-border italic text-[46px] font-bold text-[#111]">BURGER</h2>
+                        </div>
+                    </div>
                 </div>
             </div>
 

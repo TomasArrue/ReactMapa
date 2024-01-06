@@ -14,7 +14,7 @@ const Mapa = (props) => {
         let iconColor = "white";
 
         if(lugar?.repartidor == "1")iconColor = "primary"
-        if(lugar?.repartidor == "2")iconColor = "danger"
+        if(lugar?.repartidor == "2")iconColor = "secondary"
 
 
         const markerRef = useRef();
@@ -135,7 +135,6 @@ const Mapa = (props) => {
                         focus:outline-none focus:border-primary"
                         value={lugar?.repartidor}
                         onChange={(e)=>{setLugar(lugar =>{ return{...lugar, repartidor: e.target.value} });}}>
-                            <option value={-1}>Completado</option>
                             <option value={0}>Ninguno</option>
                             <option value={1}>Repartidor 1</option>
                             <option value={2}>Repartidor 2</option>

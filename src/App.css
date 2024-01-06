@@ -35,7 +35,7 @@
   display: flex;
   flex-direction: column;
   padding: 30px 0;
-  position: fixed;
+  /* position: fixed; */
   z-index: 20;
   color: #fff;
   background-color: #333;
@@ -43,8 +43,12 @@
   overflow-y: auto;
   height: 100vh;
   box-shadow: 0px 0px 15px 0px #0000000D;
-
+  width: 406px;
 }
+#buscador::-webkit-scrollbar {
+  width: 0px; /* Ancho total de la barra de desplazamiento */
+}
+
 #buscador .field{
   display: flex;
   flex-direction: column;
@@ -122,6 +126,18 @@
   border-color: var(--white); 
   border-right-color: transparent; 
   vertical-align: -0.125em; 
+}
+
+/* text-border */
+.text-border{
+  /* -webkit-text-stroke-width: 1px;
+  -webkit-text-fill-color: black;
+  -webkit-text-stroke-color: white; */
+  text-shadow:
+    0.7px 0.7px 0 #fff,
+    -0.7px 0.7px 0 #fff,
+    -0.7px -0.7px 0 #fff,
+    0.7px -0.7px 0 #fff;
 }
 
 @keyframes spin {

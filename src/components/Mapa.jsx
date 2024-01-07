@@ -10,7 +10,7 @@ const Mapa = (props) => {
 
     const RenderIcons = ({ position, dates, index }) => {        
         const [lugar, setLugar] = useState(dates);
-
+        
         let iconColor = "white";
 
         if(lugar?.repartidor == "1")iconColor = "primary"
@@ -60,6 +60,12 @@ const Mapa = (props) => {
 
         // En caso de que el pedido este completado no se renderiza
         if(dates?.completado == true) return (null)
+        
+        if (!dates?.numeroDePedido) {
+            // Si no tiene numeroDePedido, asumimos que es el marcador con ":)"
+            // y no lo renderizamos.
+            return null;
+        }
 
         return (
         <Marker

@@ -63,11 +63,26 @@ const Buscador = () => {
     }
     //#endregion
 
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter') {
+            busqueda();
+        }
+    };
+
     const busqueda = () => {
+        const match = calle.match(/([a-zA-Z\s]+)(\d+)$/);
+        let calleCorregida = calle;
+
+        if (match) {
+            const parteCaracteres = match[1].trim();
+            const parteNumeros = match[2];
+            calleCorregida = `${parteCaracteres} ${parteNumeros}`;
+        }
+
         setCagado(true);
 
         const parametros = {
-            q: numero + ", " + calle + ", La Plata, Partido de La Plata, Buenos Aires, 1900, Argentina",
+            q: numero + ", " + calleCorregida + ", La Plata, Partido de La Plata, Buenos Aires, 1900, Argentina",
             format: 'json',
             addressdetails: 1,
             polygon_geojson: 0,
@@ -190,6 +205,7 @@ const Buscador = () => {
                                 className="input"
                                 value={calle}
                                 onChange={handleCalleChange}
+                                onKeyDown={handleKeyDown}
                                 placeholder="Calle"
                             />
                         </div>
@@ -207,6 +223,7 @@ const Buscador = () => {
                                 className="input"
                                 value={numero}
                                 onChange={handleNumeroChange}
+                                onKeyDown={handleKeyDown}
                                 placeholder="N°"
                             />
                         </div>

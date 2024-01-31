@@ -6,7 +6,7 @@ import L from 'leaflet';
 const Mapa = (props) => {
     const { coordenadas, handleLugar, handleCordenadas } = props
     const position = [-34.9214, -57.9545];
-    
+    const [mapInstance, setMapInstance] = useState(null);
 
     const RenderIcons = ({ position, dates, index }) => {        
         const [lugar, setLugar] = useState(dates);
@@ -15,7 +15,6 @@ const Mapa = (props) => {
 
         if(lugar?.repartidor == "1")iconColor = "primary"
         if(lugar?.repartidor == "2")iconColor = "secondary"
-
 
         const markerRef = useRef();
     
@@ -177,15 +176,34 @@ const Mapa = (props) => {
         );
     };
 
+    useEffect(() => {
+        if (mapInstance) {
+            const onClick = (e) => {
+                const { lat, lng } = e.latlng;
+                console.log("Map clicked at: ", lat, lng);
+                // Manejo de clic en el mapa aquí. Puedes actualizar el estado o realizar otras acciones.
+            };
+    
+            // Añade el event listener
+            mapInstance.on('click', onClick);
+    
+            // Limpieza: remueve el event listener cuando el componente se desmonte o la instancia del mapa cambie
+            return () => {
+                mapInstance.off('click', onClick);
+            };
+        }
+    }, [mapInstance]); // Se ejecuta cuando `mapInstance` cambia
+
     return(
         <MapContainer 
         onpopupclose={()=>console.log("A")}
             id='mapa'
-            center={position} 
-            zoom={14} 
+            center={position}
+            zoom={13} 
+            whenCreated={setMapInstance}
             maxBounds={[
-                [-34.995, -58.051], // Límite inferior izquierdo
-                [-34.864, -57.848], // Límite superior derecho
+                [-36.500, -58.500], // Límite inferior izquierdo
+                [-34.500, -57.500], // Límite superior derecho
             ]}
         >
             <TileLayer
@@ -196,11 +214,11 @@ const Mapa = (props) => {
 
             {coordenadas.map((item, index) => {
                 return(
-                    <RenderIcons key={index} position={[item.lat, item?.lon]} dates={item} index={index}/>
-                )
+                    <RenderIcons key={index} position={[item.lat, item.lon]} dates={item} index={index}/>
+                )   
 
             })}
-                
+
                 
         </MapContainer>
     )

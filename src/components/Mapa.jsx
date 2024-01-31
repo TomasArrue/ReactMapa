@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup, Circle, Map, CircleMarker } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMapEvent } from "react-leaflet";
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
 const Mapa = (props) => {
-    const { coordenadas, handleLugar, handleCordenadas } = props
+    const { coordenadas, handleLugar, handleCordenadas, addLugar } = props
     const position = [-34.9214, -57.9545];
     const [mapInstance, setMapInstance] = useState(null);
 
@@ -75,6 +75,9 @@ const Mapa = (props) => {
                 <div class="relative">
                     <img class="w-[30px] h-[30px]" src="./map-point/point-${iconColor}.png" />
 
+                    <span class="bg-secondary p-[10px] rounded-[5px] flex h-5 justify-center items-center absolute top-[0] w-full font-semibold">
+                    </span>
+                    
                     <span
                     class="${iconColor == "white" ? "bg-white text-[#333]" : `bg-${iconColor} text-white`} p-[10px] rounded-[5px] flex h-5 justify-center items-center absolute top-[0] w-full font-semibold">
                         ${lugar?.numeroDePedido ? lugar?.numeroDePedido : ":)"}
@@ -194,9 +197,18 @@ const Mapa = (props) => {
         }
     }, [mapInstance]); // Se ejecuta cuando `mapInstance` cambia
 
+    
+    function LocationMarker() {
+        const map = useMapEvent({
+            click(e) {
+                addLugar(e.latlng.lat, e.latlng.lng)            
+            }
+        });
+    }
+
     return(
         <MapContainer 
-        onpopupclose={()=>console.log("A")}
+            onpopupclose={()=>console.log("A")}
             id='mapa'
             center={position}
             zoom={13} 
@@ -219,7 +231,7 @@ const Mapa = (props) => {
 
             })}
 
-                
+            <LocationMarker></LocationMarker>
         </MapContainer>
     )
 }

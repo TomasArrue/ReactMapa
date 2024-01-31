@@ -61,13 +61,14 @@ const Buscador = () => {
 
         setListaLugares(newListaLugares)
     }
-    //#endregion
 
     const handleKeyDown = (event) => {
         if (event.key === 'Enter') {
             busqueda();
         }
     };
+    //#endregion
+
 
     const busqueda = () => {
         const match = calle.match(/([a-zA-Z\s]+)(\d+)$/);
@@ -98,6 +99,7 @@ const Buscador = () => {
             .then((result) => {
 
                 result[0] = {...result[0],
+                    typeDeliberi:"auto",
                     completado: false,
                     calle:calle,
                     repartidor:repartidor,
@@ -118,39 +120,43 @@ const Buscador = () => {
     };
 
     const handleCordenadas = (index, newCalle, newNumero) => {
-        let query = newNumero + ", " + newCalle + ", La Plata, Partido de La Plata, Buenos Aires, 1900, Argentina"
 
-        const parametros = {
-            q: query,
-            format: 'json',
-            addressdetails: 1,
-            polygon_geojson: 0,
-            limit: 1
-        };
-        const queryString = new URLSearchParams(parametros).toString();
-        const requestOptions = {
-            method: 'GET',
-            redirect: 'follow'
-        };
-        fetch(`${NOMINATIM_BASE_URL}${queryString}`, requestOptions)
-            .then((response) => response.json())
-            .then((result) => {
-                result[0] = {...result[0]}
-                console.log("Query ", result[0])
-                let newListaDeLugares = [...listaLugares]
-                newListaDeLugares[index] = {...result[0],
-                    calle:newListaDeLugares[index]?.calle,
-                    repartidor: newListaDeLugares[index]?.repartidor,
-                    descripcion: newListaDeLugares[index]?.descripcion,
-                    numeroDePedido: newListaDeLugares[index]?.numeroDePedido
-                } 
+        if(listaLugares[index]?.typeDeliberi == "auto"){
 
-                setListaLugares(newListaDeLugares)
-            })
-            .catch((err) => {
-                console.log("err: ", err);
-            });
-        
+            let query = newNumero + ", " + newCalle + ", La Plata, Partido de La Plata, Buenos Aires, 1900, Argentina"
+    
+            const parametros = {
+                q: query,
+                format: 'json',
+                addressdetails: 1,
+                polygon_geojson: 0,
+                limit: 1
+            };
+            const queryString = new URLSearchParams(parametros).toString();
+            const requestOptions = {
+                method: 'GET',
+                redirect: 'follow'
+            };
+            fetch(`${NOMINATIM_BASE_URL}${queryString}`, requestOptions)
+                .then((response) => response.json())
+                .then((result) => {
+                    result[0] = {...result[0]}
+                    console.log("Query ", result[0])
+                    let newListaDeLugares = [...listaLugares]
+                    newListaDeLugares[index] = {...result[0],
+                        calle:newListaDeLugares[index]?.calle,
+                        repartidor: newListaDeLugares[index]?.repartidor,
+                        descripcion: newListaDeLugares[index]?.descripcion,
+                        numeroDePedido: newListaDeLugares[index]?.numeroDePedido,
+                        typeDeliberi:"auto"
+                    } 
+    
+                    setListaLugares(newListaDeLugares)
+                })
+                .catch((err) => {
+                    console.log("err: ", err);
+                });
+        }
     };
     
     useEffect(()=>{
@@ -163,6 +169,51 @@ const Buscador = () => {
     useEffect(()=>{
         sessionStorage.setItem('numeroDePedido', JSON.stringify(numeroDePedido));
     },[numeroDePedido])
+
+    const ElementoSeguidorMouse = () => {
+        const [posicion, setPosicion] = useState({ x: 0, y: 0 });
+      
+        const actualizarPosicion = (event) => {
+          setPosicion({ x: event.clientX, y: event.clientY });
+        };
+      
+        return (
+          <div
+            style={{
+              position: 'absolute',
+              left: `${posicion.x}px`,
+              top: `${posicion.y}px`,
+              backgroundColor: 'lightblue',
+              width: '50px',
+              height: '50px',
+              borderRadius: '50%',
+              zIndex: '90'
+            }}
+            onMouseMove={actualizarPosicion}
+          >
+            {/* Contenido del elemento seguidor del mouse */}
+          </div>
+        );
+      };
+
+    const addLugar = (lat, lon) =>{ 
+        let newListaDeLugares = [...listaLugares]
+
+        newListaDeLugares.push({
+            typeDeliberi:"manual",
+            lat: lat,
+            lon: lon,
+            completado: false,
+            calle:calle,
+            repartidor:repartidor,
+            descripcion:descripcion ? descripcion : "",
+            numeroDePedido: numeroDePedido + 1
+        })
+
+        setNumeroDePedido(numeroDePedido + 1)
+
+        setListaLugares(newListaDeLugares)
+    }
 
     const eliminar = (id) =>{
         let newListaLugares = listaLugares;
@@ -180,6 +231,7 @@ const Buscador = () => {
 
     return (
         <>
+        {/* <ElementoSeguidorMouse></ElementoSeguidorMouse> */}
             <div className={`fixed z-20 transition-all ${!menuOpen ? "left-[-406px]" : "left-0"} `}>
 
                 {/* Botton para cerrar/abrir menu */}
@@ -336,7 +388,7 @@ const Buscador = () => {
             </div>
 
             {/* Mapa */}
-            <Mapa coordenadas={listaLugares} handleLugar={handleLugar} handleCordenadas={handleCordenadas}/>
+            <Mapa coordenadas={listaLugares} handleLugar={handleLugar} handleCordenadas={handleCordenadas} addLugar={addLugar}/>
         </>
     )
 }

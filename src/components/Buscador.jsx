@@ -171,32 +171,6 @@ const Buscador = () => {
         sessionStorage.setItem('numeroDePedido', JSON.stringify(numeroDePedido));
     },[numeroDePedido])
 
-    const ElementoSeguidorMouse = () => {
-        const [posicion, setPosicion] = useState({ x: 0, y: 0 });
-      
-        const actualizarPosicion = (event) => {
-          setPosicion({ x: event.clientX, y: event.clientY });
-        };
-      
-        return (
-          <div
-            style={{
-              position: 'absolute',
-              left: `${posicion.x}px`,
-              top: `${posicion.y}px`,
-              backgroundColor: 'lightblue',
-              width: '50px',
-              height: '50px',
-              borderRadius: '50%',
-              zIndex: '90'
-            }}
-            onMouseMove={actualizarPosicion}
-          >
-            {/* Contenido del elemento seguidor del mouse */}
-          </div>
-        );
-      };
-
     const addLugar = (lat, lon) =>{ 
         let newListaDeLugares = [...listaLugares]
 
@@ -231,11 +205,17 @@ const Buscador = () => {
         console.log("ELIMINAR ", newListaLugares)
         setListaLugares(newListaLugares)
     }
+
+    // Puntero Manual
+    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+    const offset = 15;
+    
     
 
     return (
-        <>
-        {/* <ElementoSeguidorMouse></ElementoSeguidorMouse> */}
+        <div
+        onMouseMove={(event) => manualMode && setMousePosition({ x: event.clientX, y: event.clientY })} >
+            
             <div className={`fixed z-20 transition-all ${!menuOpen ? "left-[-406px]" : "left-0"} `}>
 
                 {/* Botton para cerrar/abrir menu */}
@@ -403,6 +383,46 @@ const Buscador = () => {
                 </div>
             </div>
 
+            {/* Punto de mapa */}
+            {
+                manualMode &&
+                <div
+                className=" pointer-events-none"
+                    style={{
+                    position: 'absolute',
+                    left: mousePosition.x - offset,
+                    top: mousePosition.y - offset,
+                    backgroundColor: 'red',
+                    width: '20px',
+                    height: '20px',
+                    borderRadius: '50%',
+                    zIndex:"90"
+                    }}
+                >
+                    <div className="relative w-fit">                    
+                        <FontAwesomeIcon
+                        className={`
+                        ${repartidor == "1" && "text-primary"}
+                        ${repartidor == "2" && "text-secondary"}  
+                        ${repartidor != "1" && repartidor != "2" && "text-white"}  
+                        text-[30px] w-[30px]`}
+                        icon={faLocationDot}/>
+
+                        {/* <span class="bg-secondary p-[10px] rounded-[5px] flex h-5 justify-center items-center absolute top-[0] w-full font-semibold">
+                        </span> */}
+
+                        <span
+                        className={`
+                        ${repartidor == "1" && "bg-primary text-white"}
+                        ${repartidor == "2" && "bg-secondary text-white"}  
+                        ${repartidor != "1" && repartidor != "2" && "bg-white text-[#333]"}  
+                        p-[10px] rounded-[5px] flex h-5 justify-center items-center absolute top-[0] w-full font-semibold text-[12px]`}>
+                            {numeroDePedido + 1}
+                        </span>
+                    </div>
+                </div>
+            }
+
             {/* Mapa */}
             <Mapa
             coordenadas={listaLugares}
@@ -412,7 +432,7 @@ const Buscador = () => {
             manualMode={manualMode}
             handleManualMode={(value)=>setManualMode(value)}
             />
-        </>
+        </div>
     )
 }
 

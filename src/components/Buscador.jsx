@@ -317,7 +317,10 @@ const Buscador = () => {
                             <button 
                             className={`w-[36px] text-[21px] ml-2 rounded-[5px] ${manualMode ? "bg-danger ": "border-2 border-danger text-danger"} transition-all`}
                                 variant="contained"
-                                onClick={()=>setManualMode(!manualMode)}
+                                onClick={(event)=>{
+                                    setManualMode(!manualMode)
+                                    setMousePosition({ x: event.clientX, y: event.clientY })
+                                }}
                             >
                                 <FontAwesomeIcon icon={faLocationDot}></FontAwesomeIcon>
                                 {/* Manual */}

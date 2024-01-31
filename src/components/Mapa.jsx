@@ -4,9 +4,10 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
 const Mapa = (props) => {
-    const { coordenadas, handleLugar, handleCordenadas, addLugar } = props
+    const { coordenadas, handleLugar, handleCordenadas, addLugar, manualMode, handleManualMode} = props
     const position = [-34.9214, -57.9545];
     const [mapInstance, setMapInstance] = useState(null);
+    const [lightMode, setLightMode] = useState (false);
 
     const RenderIcons = ({ position, dates, index }) => {        
         const [lugar, setLugar] = useState(dates);
@@ -201,7 +202,10 @@ const Mapa = (props) => {
     function LocationMarker() {
         const map = useMapEvent({
             click(e) {
-                addLugar(e.latlng.lat, e.latlng.lng)            
+                if(manualMode){
+                    addLugar(e.latlng.lat, e.latlng.lng)
+                    handleManualMode(false)
+                }
             }
         });
     }
@@ -219,9 +223,9 @@ const Mapa = (props) => {
             ]}
         >
             <TileLayer
-            url="https://api.maptiler.com/maps/streets-v2-dark/256/{z}/{x}/{y}.png?key=TUMjEvDySBYccbHxxgJN"
+            // url="https://api.maptiler.com/maps/streets-v2-dark/256/{z}/{x}/{y}.png?key=TUMjEvDySBYccbHxxgJN"
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-
             <RenderIcons position={position}/>
 
             {coordenadas.map((item, index) => {
@@ -230,6 +234,8 @@ const Mapa = (props) => {
                 )   
 
             })}
+
+            {/* Boton Light mode */}
 
             <LocationMarker></LocationMarker>
         </MapContainer>

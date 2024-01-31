@@ -5,7 +5,7 @@ import DraftsIcon from '@mui/icons-material/Drafts';
 import Mapa from "./Mapa";
 import { Image } from "@mui/icons-material";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCaretLeft, faCaretRight, faRotateForward, faRotateRight, faTrash, faTruck, faTruckFast } from '@fortawesome/free-solid-svg-icons';
+import { faCaretLeft, faCaretRight, faRotateForward, faRotateRight, faTrash, faTruck, faTruckFast, faLocationDot } from '@fortawesome/free-solid-svg-icons';
 
 
 const Buscador = () => {
@@ -20,6 +20,7 @@ const Buscador = () => {
     const [cargando, setCagado] = useState(false);
     const [repartidor, setRepartidor] = useState("0");
     const [descripcion, setDescripcion] = useState();
+    const [manualMode, setManualMode] = useState(false)
      
     const [numeroDePedido, setNumeroDePedido] = useState( JSON.parse(sessionStorage.getItem('numeroDePedido')) || 0 );
 
@@ -207,7 +208,10 @@ const Buscador = () => {
             calle:calle,
             repartidor:repartidor,
             descripcion:descripcion ? descripcion : "",
-            numeroDePedido: numeroDePedido + 1
+            numeroDePedido: numeroDePedido + 1,
+            address:{
+                house_number: numero
+            }
         })
 
         setNumeroDePedido(numeroDePedido + 1)
@@ -319,14 +323,26 @@ const Buscador = () => {
                         </div>
 
                         {/* Boton */}
-                        <div>
+                        <div
+                        className="flex">
+
                             <Button 
-                            className="btn-buscar"
+                            className="btn-buscar flex-grow-[1]"
                                 variant="contained"
                                 onClick= {busqueda}
                             >
                                 {cargando ? <span className="loader"></span> : "Buscar"}
                             </Button>
+                            
+                            <button 
+                            className={`w-[36px] text-[21px] ml-2 rounded-[5px] ${manualMode ? "bg-danger ": "border-2 border-danger text-danger"} transition-all`}
+                                variant="contained"
+                                onClick={()=>setManualMode(!manualMode)}
+                            >
+                                <FontAwesomeIcon icon={faLocationDot}></FontAwesomeIcon>
+                                {/* Manual */}
+                            </button>
+
                         </div>
                     </div>
 
@@ -388,7 +404,14 @@ const Buscador = () => {
             </div>
 
             {/* Mapa */}
-            <Mapa coordenadas={listaLugares} handleLugar={handleLugar} handleCordenadas={handleCordenadas} addLugar={addLugar}/>
+            <Mapa
+            coordenadas={listaLugares}
+            handleLugar={handleLugar}
+            handleCordenadas={handleCordenadas}
+            addLugar={addLugar}
+            manualMode={manualMode}
+            handleManualMode={(value)=>setManualMode(value)}
+            />
         </>
     )
 }

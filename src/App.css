@@ -70,7 +70,6 @@
 /* Buscador Boton de busqueda */
 #buscador .btn-buscar{
   background: var(--primary);
-  width: 100%;
   margin: auto;
   font-weight: 600;
 }
